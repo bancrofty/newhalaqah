@@ -276,7 +276,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     <div style="text-align:center"><p class="aud" data-ar="طرق التدريس والتعلم النشط داخل الحلقات" data-en="Teaching methods and active learning in the halaqah">طرق التدريس والتعلم النشط داخل الحلقات</p></div>
     <div class="stats">
       <div class="stat"><b data-ar="١٣ عامًا" data-en="13 years">١٣ عامًا</b><span data-ar="في تدريس القرآن" data-en="teaching the Quran">في تدريس القرآن</span></div>
-      <div class="stat"><b id="statCards">١٦٦</b><span data-ar="طريقة وتجربة" data-en="methods &amp; experiences">طريقة وتجربة</span></div>
+      <div class="stat"><b id="statCards">١٦٠</b><span data-ar="طريقة وتجربة" data-en="methods &amp; experiences">طريقة وتجربة</span></div>
       <div class="stat"><b data-ar="+٤٠٠" data-en="400+">+٤٠٠</b><span data-ar="فيديو على القناة" data-en="videos on the channel">فيديو على القناة</span></div>
     </div>
     <div style="text-align:center;margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button type="button" class="install" data-intro data-ar="▶ شاهدي التعريف" data-en="▶ Watch the intro">▶ شاهدي التعريف</button><button type="button" class="install" data-install data-ar="📲 أضيفيه إلى شاشة جوالكِ" data-en="📲 Add to your phone&#39;s home screen">📲 أضيفيه إلى شاشة جوالكِ</button></div>
@@ -452,7 +452,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     '02':'ثلاثة عشر عامًا من الفصول: من الفاتحة إلى الناس، ومن الحفظ إلى الإتقان'};
   const I = {
     ar:{applied:'طُبّقت', idea:'فكرة مقترحة', book:'كتاب «حياة»', thisyear:'العام الحالي', who:'الفئة', time:'الزمن', src:'المصدر',
-      goal:'الهدف', steps:'الخطوات', vars:'تنويعات وملاحظات', tools:'الأدوات', imp:'الأثر', att:'المرفقات', copy:'⧉ نسخ الطريقة',
+      goal:'الهدف', steps:'الخطوات', vars:'تنويعات وملاحظات', tools:'الأدوات', imp:'الأثر', att:'المرفقات', copy:'⧉ نسخ الطريقة', copyC:'⧉ نسخ',
       readSteps:'اقرئي الخطوات ←', all:'الكل', allMethods:'كل الطرق', results:'نتائج البحث', nonArab:'أعمالي مع غير العربيات',
       empty:'لا توجد طرق بهذه الشروط. جرّبي كلمة أخرى أو اختاري «الكل».', soon:'🔒 قريبًا', openChan:'افتحي القناة ←', videos:'أكثر من ٤٠٠ فيديو',
       comingBab:'باب قادم', soonText:'يُفتح قريبًا بإذن الله. تابعي القناة ليصلكِ الإعلان.', chan:'قناة «علم يُنتفع به» ←',
@@ -462,7 +462,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
       lockedAll:(n,babs)=>`وفي أبواب تُفتح قريبًا ${cnt(n)} أخرى: ${babs}.`,
       ideaNote:'«فكرة مقترحة» تعني أنها فكرة لم تُنفَّذ بعد، وقد تحتاج بعض التعديلات عند التطبيق؛ فلا تتوقفي أنتِ عن الإبداع.', sig:'— من «حلقة جديدة» newhalaqah.com · فاطمة وجدي · علم يُنتفع به', back:'→ رجوع', close:'إغلاق', fav:'المفضلة', tried:'✓ جرّبتُ هذه الطريقة', triedOn:'✓ جرّبتِها', triedMsg:'شكرًا لكِ! تُحسب تجربتكِ دون أي بيانات عنكِ'},
     en:{applied:'Applied', idea:'Suggested idea', book:'«Hayah» book', thisyear:'This year', who:'For', time:'Time', src:'Source',
-      goal:'Goal', steps:'Steps', vars:'Variations & notes', tools:'Tools', imp:'Impact', att:'Attachments', copy:'⧉ Copy method',
+      goal:'Goal', steps:'Steps', vars:'Variations & notes', tools:'Tools', imp:'Impact', att:'Attachments', copy:'⧉ Copy method', copyC:'⧉ Copy',
       readSteps:'Read the steps →', all:'All', allMethods:'All methods', results:'Search results', nonArab:'My work with non-Arabic speakers',
       empty:'No methods match. Try another word or choose «All».', soon:'🔒 Coming soon', openChan:'Open the channel →', videos:'400+ videos',
       comingBab:'Coming section', soonText:'Opening soon, in sha Allah. Follow the channel to hear when it opens.', chan:'«Ilm Yuntafa\' Bih» channel →',
@@ -486,6 +486,10 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   const stLabel = s => s==='d' ? t('applied') : t('idea');
 
   const isOpen = n => OPEN.includes(n);
+  /* باب ٠٢ «حلقاتي وفصولي» شرحٌ للفصول ومناهجها، لا طرق: لا يُعدّ في عدد الطرق، ولا حالة له ولا زر «جرّبتُ» */
+  const CLS = '02', isM = c => c.bab!==CLS;
+  function cntF(n){ if(lang==='en') return n===1 ? '1 class' : `${n} classes`;
+    if(n===1) return 'فصل واحد'; if(n===2) return 'فصلان'; return n<=10 ? `${AR(n)} فصول` : `${AR(n)} فصلًا`; }
   const ALL = D.cards; D.cards = ALL.filter(c => isOpen(c.bab));
   const st = {bab:'', s:'', src:'', aud:'', q:''};
   let visible = [], view = 'home', stack = [];
@@ -505,7 +509,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     document.querySelectorAll('[data-lang]').forEach(el => el.hidden = el.dataset.lang!==lang);
     document.getElementById('langBtn').textContent = lang==='en' ? 'عربي' : 'EN';
     document.getElementById('langBtn').setAttribute('aria-label', lang==='en' ? 'العربية' : 'English');
-    document.getElementById('statCards').textContent = lang==='en' ? ALL.length : AR(ALL.length);
+    const nM = ALL.filter(isM).length; document.getElementById('statCards').textContent = lang==='en' ? nM : AR(nM);
   }
 
   /* ---------- tiles & cards ---------- */
@@ -518,7 +522,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     const img = c.img.length ? `<div class="thumb"><img src="imgs/${c.img[0]}.jpg" alt="" loading="lazy"></div>` : '';
     return `<button type="button" class="card${c.s==='i'?' idea':''}" data-id="${c.id}">${fav.has(c.t)?'<span class="fv" aria-label="♥">♥</span>':''}${img}
       <h3>${esc(L(c,'t'))}</h3><p>${esc(L(c,'goal').replace(/[﴿﴾]/g,''))}</p>
-      <div class="chips"><span class="st ${c.s}"${c.s==='i'?` title="${esc(t('ideaNote'))}"`:''}>${stLabel(c.s)}</span><span class="src">${esc(srcLabel(c))}</span></div></button>`;
+      <div class="chips">${isM(c) ? `<span class="st ${c.s}"${c.s==='i'?` title="${esc(t('ideaNote'))}"`:''}>${stLabel(c.s)}</span>` : ''}<span class="src">${esc(srcLabel(c))}</span></div></button>`;
   }
   const grid = cs => `<div class="grid">${cs.map(cardHTML).join('')}</div>`;
   const groupsOrder = [...new Set(D.babs.map(b => b.g))];
@@ -527,7 +531,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     document.getElementById('groups').innerHTML = groupsOrder.map(g => `<div><p class="gtitle">${esc(GT(g))}</p><div class="tiles">${D.babs.filter(b=>b.g===g).map(tileHTML).join('')}</div></div>`).join('');
     renderToday();
   }
-  const pool = D.cards.filter(c => c.s==='d');
+  const pool = D.cards.filter(c => c.s==='d' && isM(c));
   let tIdx = (() => { const d = new Date(); return (d.getFullYear()*372 + d.getMonth()*31 + d.getDate()) % pool.length; })();
   function renderToday(){
     const c = pool[tIdx]; const el = document.getElementById('today'); el.dataset.id = c.id;
@@ -540,7 +544,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   function renderChips(){ babsEl.innerHTML = `<button type="button" data-v="">${t('all')}</button>` + D.babs.filter(b => isOpen(b.n)).map(b => `<button type="button" data-v="${b.n}">${esc(BT(b.n))}</button>`).join(''); }
   function lockedNote(q){
     if(!q && !st.aud && !st.src) return '';
-    const lc = ALL.filter(c => !isOpen(c.bab) && match(c,q) && (!st.s || c.s===st.s) && (!st.src || (st.src==='h' ? c.src===H : c.src!==H)) && (!st.aud || c.tags.includes('لغير_العربيات')));
+    const lc = ALL.filter(c => !isOpen(c.bab) && match(c,q) && (!st.s || (c.s===st.s && isM(c))) && (!st.src || (st.src==='h' ? c.src===H : c.src!==H)) && (!st.aud || c.tags.includes('لغير_العربيات')));
     if(!lc.length) return '';
     const babs = [...new Set(lc.map(c=>c.bab))].map(n => `«${esc(BT(n))}»`).join(lang==='en' ? ', ' : '، ');
     return `<div class="lnote">🔒 ${q ? t('locked')(lc.length, st.q.trim(), babs) : t('lockedAll')(lc.length, babs)}</div>`;
@@ -550,18 +554,19 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     [['segS','s'],['segSrc','src'],['segAud','aud']].forEach(([id,k]) => document.querySelectorAll('#'+id+' button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v===st[k]))));
     document.getElementById('moreBtn').classList.toggle('act', !!(st.src||st.aud));
     const q = norm(st.q.trim());
-    visible = D.cards.filter(c => (!st.bab || c.bab===st.bab) && (!st.s || c.s===st.s)
+    visible = D.cards.filter(c => (!st.bab || c.bab===st.bab) && (!st.s || (c.s===st.s && isM(c)))
       && (!st.src || (st.src==='h' ? c.src===H : c.src!==H)) && (!st.aud || c.tags.includes('لغير_العربيات')) && match(c,q));
     document.getElementById('listTitle').textContent = st.bab ? BT(st.bab) : (q ? t('results') : (st.aud ? t('nonArab') : t('allMethods')));
     const sub = document.getElementById('listSub'); sub.hidden = !st.bab; if(st.bab) sub.textContent = BD(st.bab);
-    document.getElementById('count').textContent = cnt(visible.length);
+    { const m = visible.filter(isM).length, f = visible.length - m;
+      document.getElementById('count').textContent = st.bab===CLS ? cntF(f) : (f ? (m ? cnt(m) + (lang==='en' ? ', ' : '، و') + cntF(f) : cntF(f)) : cnt(m)); }
     const res = document.getElementById('results');
     const note = st.bab ? '' : lockedNote(q);
     if(!visible.length){ res.innerHTML = `<div class="empty">${t('empty')}</div>` + note; return; }
     let html = '';
     (st.bab ? [st.bab] : D.babs.map(b => b.n)).forEach(n => {
       const cs = visible.filter(c => c.bab===n); if(!cs.length) return;
-      if(!st.bab) html += `<h3 class="group-h">${esc(BT(n))}<small>${cnt(cs.length)}</small></h3>`;
+      if(!st.bab) html += `<h3 class="group-h">${esc(BT(n))}<small>${n===CLS ? cntF(cs.length) : cnt(cs.length)}</small></h3>`;
       html += grid(cs);
     });
     res.innerHTML = (st.s==='i' ? `<div class="inote" style="margin-bottom:12px">💡 ${t('ideaNote')}</div>` : '') + html + note;
@@ -624,12 +629,12 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     let i = list.findIndex(c => c.id===id); const c = i<0 ? D.cards.find(x=>x.id===id) : list[i]; if(!c) return; cur = c; panel.dataset.kind='card';
     const li = arr => arr.map(x => `<li>${txt(x)}</li>`).join('');
     const facts = [L(c,'who') && `<span><b>${t('who')}:</b> ${esc(L(c,'who'))}</span>`, L(c,'time') && `<span><b>${t('time')}:</b> ${esc(L(c,'time'))}</span>`,
-      `<span><b>${t('src')}:</b> ${esc(srcLabel(c))}</span>`, `<span class="st ${c.s}">${stLabel(c.s)}</span>`].filter(Boolean).join('');
+      `<span><b>${t('src')}:</b> ${esc(srcLabel(c))}</span>`, isM(c) && `<span class="st ${c.s}">${stLabel(c.s)}</span>`].filter(Boolean).join('');
     const prev = i>0 ? list[i-1] : null, next = (i>=0 && i<list.length-1) ? list[i+1] : null;
     const on = fav.has(c.t);
     const arrowP = lang==='en' ? '←' : '→', arrowN = lang==='en' ? '→' : '←';
     panel.innerHTML = `<div class="ptop"><button type="button" class="circ" id="closeBtn" aria-label="${t('close')}">✕</button>
-      <div class="acts"><button type="button" class="circ" id="copyBtn">${t('copy')}</button><button type="button" class="circ${on?' on':''}" id="favBtn" aria-pressed="${on}" aria-label="${t('fav')}">${on?'♥':'♡'}</button></div></div>
+      <div class="acts"><button type="button" class="circ" id="copyBtn">${isM(c) ? t('copy') : t('copyC')}</button><button type="button" class="circ${on?' on':''}" id="favBtn" aria-pressed="${on}" aria-label="${t('fav')}">${on?'♥':'♡'}</button></div></div>
       <div class="bab">${esc(BT(c.bab))}</div><h2 id="pTitle">${esc(L(c,'t'))}</h2>
       <div class="facts">${facts}</div>
       ${c.s==='i' ? `<div class="inote">💡 ${t('ideaNote')}</div>` : ''}
@@ -640,7 +645,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
       ${L(c,'tools') ? `<h4>${t('tools')}</h4><div>${txt(L(c,'tools'))}</div>` : ''}
       ${L(c,'imp') ? `<div class="impact"><b>${t('imp')}: </b>${txt(L(c,'imp'))}</div>` : ''}
       ${lang==='ar' && c.tags.length ? `<div class="tags">${c.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
-      <div class="react"><button type="button" class="rbtn${tried.has(c.id)?' on':''}" id="triedBtn" aria-pressed="${tried.has(c.id)}">${tried.has(c.id)?t('triedOn'):t('tried')}</button></div>
+      ${!isM(c) ? '' : `<div class="react"><button type="button" class="rbtn${tried.has(c.id)?' on':''}" id="triedBtn" aria-pressed="${tried.has(c.id)}">${tried.has(c.id)?t('triedOn'):t('tried')}</button></div>`}
       <div class="nav"><button type="button" id="prevBtn" ${prev?'':'hidden'}>${arrowP} ${prev?esc(L(prev,'t')):''}</button><button type="button" id="nextBtn" ${next?'':'hidden'}>${next?esc(L(next,'t')):''} ${arrowN}</button></div>`;
     scrim.hidden = false; panel.scrollTop = 0; document.body.style.overflow = 'hidden';
     document.getElementById('closeBtn').onclick = closeCard;
@@ -649,7 +654,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
       try{ navigator.clipboard.writeText(s).then(done, ()=>fallback(s)); }catch(e){ fallback(s); }
       function fallback(s){ const ta=document.createElement('textarea'); ta.value=s; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); done();}catch(e){ toast(t('copyFail')); } ta.remove(); } };
     /* «جرّبتُ هذه الطريقة»: يُحسب في Web Analytics كزيارة للرابط /tried-cardNN (بلا قاعدة بيانات ولا بيانات شخصية)، ويُحفظ على الجهاز فقط */
-    document.getElementById('triedBtn').onclick = e => { const b=e.currentTarget; if(tried.has(c.id)){ tried.delete(c.id); } else { tried.add(c.id); toast(t('triedMsg'));
+    if(isM(c)) document.getElementById('triedBtn').onclick = e => { const b=e.currentTarget; if(tried.has(c.id)){ tried.delete(c.id); } else { tried.add(c.id); toast(t('triedMsg'));
         if(PATHMODE){ try{ history.pushState(null,'','/tried-'+c.id); }catch(x){} } }
       LS.set('pf-tried',[...tried]); const o=tried.has(c.id); b.classList.toggle('on',o); b.textContent=o?t('triedOn'):t('tried'); b.setAttribute('aria-pressed',o); };
     if(prev) document.getElementById('prevBtn').onclick = () => openCard(prev.id);
