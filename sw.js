@@ -1,5 +1,5 @@
 /* حلقة جديدة — يعمل دون إنترنت بعد أول زيارة. الصفحة: الشبكة أولًا. */
-const CACHE="nh-202611130915";
+const CACHE="nh-202611131001";
 const SHELL=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","imgs/anam_st.jpg","imgs/circ.jpg","imgs/cube.jpg","imgs/dart.jpg","imgs/face.jpg","imgs/face2.jpg","imgs/fan.jpg","imgs/half.jpg","imgs/heads.jpg","imgs/hot.jpg","imgs/isra.jpg","imgs/keys.jpg","imgs/letter.jpg","imgs/light.jpg","imgs/logo.jpg","imgs/m_doc.jpg","imgs/m_plan.jpg","imgs/m_sheet.jpg","imgs/m_stations.jpg","imgs/nahl1.jpg","imgs/nahl2.jpg","imgs/nahl3.jpg","imgs/nahl4.jpg","imgs/nahl5.jpg","imgs/nur.jpg","imgs/party.jpg","imgs/pyramid.jpg","imgs/row.jpg","imgs/rumor.jpg","imgs/save.jpg","imgs/scroll.jpg","imgs/scroll2.jpg","imgs/stage.jpg","imgs/tech1.jpg","imgs/tech2.jpg","imgs/tf.jpg"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(SHELL.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("nh-")&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
