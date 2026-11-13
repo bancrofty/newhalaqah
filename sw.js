@@ -1,0 +1,8 @@
+/* حلقة جديدة — يعمل دون إنترنت بعد أول زيارة. الصفحة: الشبكة أولًا. */
+const CACHE="nh-202611130831";
+const SHELL=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","imgs/anam_st.jpg","imgs/circ.jpg","imgs/cube.jpg","imgs/dart.jpg","imgs/face.jpg","imgs/face2.jpg","imgs/fan.jpg","imgs/half.jpg","imgs/heads.jpg","imgs/hot.jpg","imgs/isra.jpg","imgs/keys.jpg","imgs/letter.jpg","imgs/light.jpg","imgs/logo.jpg","imgs/m_doc.jpg","imgs/m_plan.jpg","imgs/m_sheet.jpg","imgs/m_stations.jpg","imgs/nahl1.jpg","imgs/nahl2.jpg","imgs/nahl3.jpg","imgs/nahl4.jpg","imgs/nahl5.jpg","imgs/nur.jpg","imgs/party.jpg","imgs/pyramid.jpg","imgs/row.jpg","imgs/rumor.jpg","imgs/save.jpg","imgs/scroll.jpg","imgs/scroll2.jpg","imgs/stage.jpg","imgs/tech1.jpg","imgs/tech2.jpg","imgs/tf.jpg"];
+self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(SHELL.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()))});
+self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("nh-")&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener("fetch",e=>{const r=e.request;if(r.method!=="GET")return;const u=new URL(r.url);if(u.origin!==location.origin)return;
+ if(r.mode==="navigate"){e.respondWith(fetch(r).then(res=>{const c=res.clone();caches.open(CACHE).then(x=>x.put(r,c));return res}).catch(()=>caches.match(r).then(m=>m||caches.match("index.html"))));return}
+ e.respondWith(caches.match(r).then(m=>m||fetch(r).then(res=>{const c=res.clone();caches.open(CACHE).then(x=>x.put(r,c));return res})))});
