@@ -570,6 +570,13 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     document.getElementById('favList').innerHTML = cs.length ? grid(cs) : `<div class="empty">${t('favEmpty')}</div>`;
   }
 
+  /* ---------- روابط حقيقية (newhalaqah.com/bab03) لتُحسب زيارات كل باب وطريقة في الإحصاءات؛ وفي غير النطاق تبقى بعلامة # ---------- */
+  const PATHMODE = /(^|\.)newhalaqah\.com$|^localhost$|^127\./.test(location.hostname);
+  let routing = false;
+  function curKey(){ if(PATHMODE){ const p=decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g,''); if(p && p!=='index.html') return p; } return location.hash.slice(1); }
+  function setKey(k){ const url = PATHMODE ? '/'+(k||'') : (k ? '#'+k : location.pathname+location.search);
+    if(url === (PATHMODE ? location.pathname : (location.hash||location.pathname+location.search))) return;
+    try{ history[routing ? 'replaceState' : 'pushState'](null,'',url); }catch(e){} }
   /* ---------- views ---------- */
   const tabsEl = document.querySelector('.tabs');
   function go(v, opts={}){
@@ -580,7 +587,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     document.body.classList.toggle('sub', v!=='home');
     if(v==='list') render(); if(v==='fav') renderFav();
     if(!opts.keepScroll) window.scrollTo(0,0);
-    try{ history.replaceState(null,'', v==='home' ? location.pathname+location.search : '#'+(v==='list'&&st.bab?'bab'+st.bab:v)); }catch(e){}
+    setKey(v==='home' ? '' : (v==='list'&&st.bab?'bab'+st.bab:v));
   }
   tabsEl.addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; if(b.dataset.go==='list'){ st.bab=''; } go(b.dataset.go); if(b.dataset.go==='list') setTimeout(()=>document.getElementById('q').focus({preventScroll:true}),50); });
   document.getElementById('backBtn').onclick = () => go(stack.pop() || 'home', {back:true});
@@ -593,7 +600,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     const p = e.target.closest('.pill'); if(p){ const [k,v]=p.dataset.q.split(':'); Object.assign(st,{bab:'',s:'',src:'',aud:'',q:''},{[k]:v}); document.getElementById('q').value=''; if(k!=='s'){ moreBox.hidden=false; moreBtn.setAttribute('aria-expanded','true'); } go('list'); return; }
     const c = e.target.closest('.card,.today'); if(c && c.dataset.id){ lastFocus=c; openCard(c.dataset.id); }
   });
-  babsEl.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; st.bab = b.dataset.v; render(); try{history.replaceState(null,'','#'+(st.bab?'bab'+st.bab:'list'))}catch(e){} });
+  babsEl.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; st.bab = b.dataset.v; render(); setKey(st.bab?'bab'+st.bab:'list'); });
   ['segS:s','segSrc:src','segAud:aud'].forEach(x => { const [id,k]=x.split(':'); document.getElementById(id).addEventListener('click', e => { const b=e.target.closest('button'); if(b){ st[k]=b.dataset.v; render(); }}); });
   document.getElementById('q').addEventListener('input', e => { st.q = e.target.value; if(st.q.trim()) st.bab=''; render(); });
   const moreBtn = document.getElementById('moreBtn'), moreBox = document.getElementById('moreBox');
@@ -642,11 +649,11 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     if(prev) document.getElementById('prevBtn').onclick = () => openCard(prev.id);
     if(next) document.getElementById('nextBtn').onclick = () => openCard(next.id);
     document.getElementById('closeBtn').focus({preventScroll:true});
-    try{ history.replaceState(null,'','#'+c.id); }catch(e){}
+    setKey(c.id);
   }
   function closeCard(){ scrim.hidden = true; document.body.style.overflow=''; if(view==='list') render(); if(view==='fav') renderFav();
     if(lastFocus && document.body.contains(lastFocus)) lastFocus.focus({preventScroll:true});
-    try{ history.replaceState(null,'', view==='home' ? location.pathname+location.search : '#'+(view==='list'&&st.bab?'bab'+st.bab:view)); }catch(e){} }
+    setKey(view==='home' ? '' : (view==='list'&&st.bab?'bab'+st.bab:view)); }
   scrim.addEventListener('click', e => { if(e.target===scrim) closeCard(); });
   document.addEventListener('keydown', e => { if(e.key==='Escape' && !scrim.hidden) closeCard(); });
 
@@ -698,19 +705,22 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   document.getElementById('introSkip').onclick=closeIntro;
   document.addEventListener('click', e => { if(e.target.closest('[data-intro]')) openIntro(); });
   document.addEventListener('keydown', e => { if(e.key==='Escape' && !intro.hidden) closeIntro(); });
-  if(!LS.get('pf-intro',0) && !location.hash) openIntro();
+  if(!LS.get('pf-intro',0) && !curKey()) openIntro();
 
   /* ---------- start ---------- */
   applyStatic(); renderHome(); renderChips();
-  function route(){
-    const h = location.hash.slice(1);
+  function route(){ routing = true; try{ route_(); } finally { routing = false; } }
+  function route_(){
+    if(PATHMODE && location.hash.length>1 && /^\/(index\.html)?$/.test(location.pathname)){ try{ history.replaceState(null,'','/'+location.hash.slice(1)); }catch(e){} }
+    const h = curKey();
     if(/^card\d+$/.test(h)){ if(cur && cur.id===h && !scrim.hidden) return; if(!document.querySelector('.view.on')) go('home'); const lc = ALL.find(c=>c.id===h); if(lc && !isOpen(lc.bab)) openLocked(lc.bab); else openCard(h); }
     else if(/^bab\d\d$/.test(h)){ if(!scrim.hidden) closeCard(); const n=h.slice(3); if(!BAB[n]) { go('home'); return; } if(!isOpen(n)){ if(!document.querySelector('.view.on')) go('home'); openLocked(n); return; } st.bab = n; go('list'); }
     else if(['about','babs','fav','list'].includes(h)){ if(!scrim.hidden) closeCard(); if(view!==h) go(h); }
-    else if(!document.querySelector('.view.on')) go('home');
+    else { if(!scrim.hidden) closeCard(); if(view!=='home' || !document.querySelector('.view.on')) go('home'); }
   }
   route(); stack = [];
   window.addEventListener('hashchange', route);
+  window.addEventListener('popstate', route);
 })();
 </script>
 
