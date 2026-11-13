@@ -435,7 +435,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   /* الأبواب المفتوحة — لفتح باب جديد أضيفي رقمه هنا (وترجمي بطاقاته في data_en.json) */
   const OPEN = ['02','03'];
   /* الطرق التي لها مقطع متحرك في vids/ (الاسم نفسه الصورة) */
-  const VIDS = ['m_stations'];
+  const VIDS = ['m_stations','save','row','circ','face','half'];
   const CHAN = '11', CHAN_URL = 'https://www.youtube.com/@fatma-wagdy';
   const TEASE = {
     '04':'حفظتِ… فكيف لا يتفلّت؟ طرق تجعل القريب والبعيد حاضرَين دائمًا',
@@ -626,7 +626,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
       <div class="facts">${facts}</div>
       ${c.s==='i' ? `<div class="inote">💡 ${t('ideaNote')}</div>` : ''}
       <h4>${t('goal')}</h4><div class="goal">${txt(L(c,'goal'))}</div>
-      ${c.img.length ? `<div class="pics">${c.img.map(x => VIDS.includes(x) ? `<video class="wide" src="vids/${x}.mp4" poster="imgs/${x}.jpg" autoplay muted loop playsinline aria-label="${esc(L(c,'t'))}"></video>` : `<img src="imgs/${x}.jpg" alt=""${x.startsWith('m_')?' class="wide"':''}>`).join('')}</div>` : ''}
+      ${c.img.length ? `<div class="pics">${c.img.map(x => VIDS.includes(x) ? `<video class="wide" src="vids/${x}.mp4" poster="vids/${x}.jpg" autoplay muted loop playsinline preload="metadata" aria-label="${esc(L(c,'t'))}"></video>` : `<img src="imgs/${x}.jpg" alt=""${x.startsWith('m_')?' class="wide"':''}>`).join('')}</div>` : ''}
       <h4>${t('steps')}</h4><ol>${li(L(c,'steps'))}</ol>
       ${L(c,'var').length ? `<h4>${t('vars')}</h4><ul>${li(L(c,'var'))}</ul>` : ''}
       ${L(c,'tools') ? `<h4>${t('tools')}</h4><div>${txt(L(c,'tools'))}</div>` : ''}
