@@ -294,6 +294,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     <div style="text-align:center;margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button type="button" class="install" data-intro data-ar="▶ شاهدي التعريف" data-en="▶ Watch the intro">▶ شاهدي التعريف</button><button type="button" class="install" data-install data-ar="📲 أضيفيه إلى شاشة جوالكِ" data-en="📲 Add to your phone&#39;s home screen">📲 أضيفيه إلى شاشة جوالكِ</button></div>
   </div></div>
   <div class="wrap">
+    <div id="newWrap" hidden><div class="sec-h"><h3 id="newTitle"></h3></div><p class="vsub" id="newSub" hidden></p><div class="grid" id="newList"></div></div>
     <div class="sec-h"><h3 data-ar="طريقة اليوم" data-en="Method of the day">طريقة اليوم</h3><button type="button" id="todayNext" data-ar="طريقة أخرى ←" data-en="Another method →">طريقة أخرى ←</button></div>
     <button type="button" class="today" id="today"></button>
     <div id="mostWrap" hidden><div class="sec-h"><h3 data-ar="الأكثر تجربةً" data-en="Most tried">الأكثر تجربةً</h3></div><div class="mostlist" id="mostList"></div></div>
@@ -448,6 +449,10 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   const H = 'كتاب «حياة»';
   /* الأبواب المفتوحة — لفتح باب جديد أضيفي رقمه هنا (وترجمي بطاقاته في data_en.json) */
   const OPEN = ['02','03'];
+  /* الجدول الأسبوعي (قرار ٢٧ نوفمبر ٢٠٢٦): طريقتان جديدتان كل سبت بتوقيت دبي، وفي الإجازات «من الأرشيف» فقط. باب ١٤ «حقائب المعلمات» خارج الجدولة. المفتاح عنوان الطريقة لا رقمها */
+  const SCHED = {"علاج المشكلة الشائعة في كل سورة":"2027-01-02","«اذكري ما يلي»: أسئلة الموضع والمعنى":"2027-01-02","المعنى المطوي":"2027-01-09","ورقة «أكملي الآية»":"2027-01-09","الورقة المرقّمة من ١ إلى ١٠":"2027-01-16","المواضيع العامة للسور":"2027-01-16","مسابقات الواتساب للمراجعة":"2027-01-23","اختبار الزميلات في غياب المعلمة":"2027-01-23","مراجعة الجزء في ٢٥ دقيقة":"2027-01-30","خريطة صفحات الأنعام وتدريب المفاصل":"2027-01-30","«الكل يسأل واحدة»":"2027-03-20","السرد الثنائي الكامل":"2027-03-20","حصة المراجعة التراكمية: أول أحد من كل شهر":"2027-03-27","صندوق البعيد":"2027-03-27","الورد الصوتي المتبادل":"2027-04-03","كتلة المعالجة الجماعية":"2027-04-03","رزنامة ١٢ أسبوعًا لتنويع طرائق المراجعة":"2027-04-10","الجولات الدوّارة بالجوازات":"2027-04-10","اصطفّي بترتيب المقطع":"2027-04-17","الأرباع بالمؤقّت":"2027-04-17","القفز بين الأجزاء":"2027-04-24","المتشابهات المتقاطعة":"2027-04-24","الآية الفريدة":"2027-05-01","الوصل البعيد":"2027-05-01","خريطة الجزء في ثلاث دقائق":"2027-05-08","النفير: سرد سورة كاملة على ثلاث أخوات":"2027-05-08","حارسات الأجزاء":"2027-05-15","السلسلة الدوّارة":"2027-05-15","محطات المراجعة الدوّارة: أوراق بالأرقام":"2027-05-22","صفحتي وكلمتي: مراجعة سورة كاملة بصفحة لكل طالبة":"2027-05-22","مواضع ﴿قُلۡ﴾ في سورة يونس: استحضار وكتابة":"2027-05-29","اصطفّي بترتيب المقطع على سورة قصصية: مقاطع بعناوين القصص":"2027-05-29","معايير اختيار الاستراتيجية":"2027-06-05","الحوار والنقاش في الدروس":"2027-06-05","بدّلي الأوراق":"2027-06-12","الكرسي الساخن":"2027-06-12","نصف الدائرة":"2027-06-19","المواجهة":"2027-06-19","السبورة الأسرع":"2027-06-26","اللفافات":"2027-06-26","المسابقة الدائرية":"2027-09-18","الصف الأسرع":"2027-09-18","حرفك سؤالك":"2027-09-25","أنقذي فريقك":"2027-09-25","الرؤوس المرقّمة":"2027-10-02","مكعب الأسماء":"2027-10-02","السهم":"2027-10-09","البطاقات المروحية":"2027-10-09","عصا الصح والخطأ":"2027-10-16","مسابقة قُرعة البقرة: ثلاثة مستويات × ١٢ تحديًا":"2027-10-16","اصطياد الخطأ: الخطأ المزروع":"2027-10-23","بنك الأربعين استراتيجية نشطة":"2027-10-23","محطات التعلم الثلاث":"2027-10-30","ستون ثانية بلا كلام":"2027-10-30","الحلقات المتداخلة":"2027-11-06","اثنتا عشرة نبضة تفاعل للورش الأونلاين":"2027-11-06","جولة المزاد":"2027-11-13","أسئلة من صنع الطالبات":"2027-11-13","زوايا الدخول الثماني إلى الربع الواحد":"2027-11-20","مسابقة الكرسي الشاغر":"2027-11-20","تهيئة ما بعد الإجازات":"2027-11-27","تغيير المكان والترتيب":"2027-11-27","«دخول دافئ»: كلمة طيبة قبل فتح المصاحف":"2028-01-01","صندوق «دعاء بظهر الغيب»: قلوب متصلة طوال الحصة":"2028-01-01","«ألغاز الثلاثين ثانية»: تيقّظ وضحكة خفيفة":"2028-01-08","«بطاقات التعارف»: سؤال يقرّب القلوب":"2028-01-08","«حركة وفضول»: طاقة جديدة قبل الجلوس الطويل":"2028-01-15","قواعد ضبط الفصل":"2028-01-15","العلاقات داخل الحلقة":"2028-01-22","اللقاء الأول في الحلقة":"2028-01-22","عشر نصائح عند إلقاء الدرس":"2028-01-29","مبادئ المعلمة":"2028-01-29","التعزيز المباشر وغير المباشر":"2028-03-18","نظام الحصة: ٥٥ + ٢٠ + ٤٥":"2028-03-18","التصحيح الجماعي للتلاوة":"2028-03-25","ورقة «ما هو مطلوب مني هذا العام»":"2028-03-25","ضبط المحطات الدوّارة":"2028-04-01","الساعة الذهبية: توزيع الستين دقيقة":"2028-04-01","المسرّبات الخمسة لوقت الحلقة":"2028-04-08","إدارة اللحظة: مواقف الحلقة وحلولها":"2028-04-08","ميثاق القاعة وميثاق الورشة الرقمي":"2028-04-15","الفروق الفردية: ثلاثة مستويات لواجب واحد":"2028-04-15","ثلاثون فكرة تحفيزية":"2028-04-22","منهجية الخطة الشخصية لكل طالبة":"2028-04-22","وثيقة الخطط الشخصية المفصّلة":"2028-04-29","ورقة الخطة المتفق عليها":"2028-04-29","تقييم أداء الحلقة":"2028-05-06","جلسة نقاط القوة والضعف الفردية":"2028-05-06","اختبار أصول الشاطبية: ٦٠ سؤالًا":"2028-05-13","رقمنة اختبار الشاطبية المكتوب بخط اليد":"2028-05-13","اختبار أصول القراء في سورة البقرة":"2028-05-20","الاختبار الشفوي لأصول الشاطبية: ٣٠ سؤالًا × ٥ مقاطع":"2028-05-20","اختبار ورد الشهر السابق":"2028-05-27","اختبار التجويد الشامل: ٤٠ سؤالًا":"2028-05-27","بطاقات النتائج الفردية السرّية":"2028-06-03","القاعدة الثلاثية للتغذية الراجعة":"2028-06-03","أنواع التقويم الخمسة في الحلقة":"2028-06-10","اللوحة اللونية":"2028-06-10","أدوات التخطيط والمتابعة الخمس":"2028-06-17","خريطة الخطأ بعد الاختبار":"2028-06-17","أنواع الوسائل التعليمية وشروط اختيارها":"2028-06-24","مفاتيح الدعوة: مؤمن آل فرعون":"2028-06-24","نور المجتمع: سورة النور":"2028-09-16","هرم الوصايا العشر: سورة الأنعام":"2028-09-16","دور القرآن في حياتنا: سورة الإسراء":"2028-09-23","صناديق النعم: سورة النحل":"2028-09-23","القوي الأمين: نشاط مسرحي":"2028-09-30","خطوات التفكير الإبداعي لتصميم الوسيلة":"2028-09-30","التقنية داخل الحلقة":"2028-10-07","نموذج «مفاتيح» لصناعة الوسيلة من الصفر":"2028-10-07","تفكيك هرم التوحيد وميدالية المفاتيح":"2028-10-14","ورشة «مصنع الوسائل» والمعرض المتجوّل":"2028-10-14","أدب الوسيلة مع كتاب الله":"2028-10-21","بطاقة توثيق الوسيلة وقائمة فحصها":"2028-10-21","الخط العثماني بين الأجهزة":"2028-10-28","أوراق العمل المطبوعة بأقل حبر":"2028-10-28","الجدار الحي":"2028-11-04","حفل تكريم الخاتمات بأصوات الأهل":"2028-11-04","لقاء بداية العام الدراسي":"2028-11-11","نص اللقاء الافتتاحي بالإنجليزية":"2028-11-11","مسابقة ختام دورة تفسير البقرة":"2028-11-18","جوائز بفئات بدل المراكز":"2028-11-18","سلسلة «شرح أصول الدرة المضية»: ١٣ بابًا":"2028-11-25","ملخّص أصول القراء السبعة في سورة البقرة":"2028-11-25","دورة شرح الشاطبية: الأصول وفرش البقرة":"2029-01-06","فقرات ثابتة في شرائح الشاطبية":"2029-01-06","عرض «الياءات الزوائد» التفاعلي":"2029-01-13","عرض «How Our Halaqah Works»":"2029-01-13","عرض «الضاد والظاء»":"2029-01-20","عرض «الميم الساكنة والنون الساكنة والتنوين»":"2029-01-20","عرض «باب المد»":"2029-01-27","درس «The Quran»: فضله وآدابه ونصائح الحفظ والمراجعة":"2029-01-27","من كشف الدرجات إلى قرار: تحليل نتائج فصل غير العربيات":"2029-03-17","ملف متابعة الترم بتجميع تلقائي":"2029-03-17","نظام توزيع الاختبار الشفوي بالاختيار الأول والثاني":"2029-03-24","تحويل بنوك الأسئلة إلى نماذج مصحّحة آليًا":"2029-03-24"};
+  const ARCH = {"2026-12-05":"التسميع الجماعي بصوت واحد","2026-12-12":"التسميع الفردي للنصاب كاملًا","2026-12-19":"المقاطع القصيرة الكثيرة","2026-12-26":"التسميع بالمؤقّت","2027-02-06":"التسلسل: أعيدي آخر آية وزيدي","2027-02-13":"علاج المشكلة الشائعة في كل سورة","2027-02-20":"التسميع الثنائي بالمصاحف المغلقة","2027-02-27":"«اذكري ما يلي»: أسئلة الموضع والمعنى","2027-03-06":"الثنائي المتداخل لتثبيت السور الشديدة","2027-03-13":"المعنى المطوي","2027-07-03":"السؤال من البدايات والنهايات","2027-07-10":"ورقة «أكملي الآية»","2027-07-17":"الجماعي مع النداء المفاجئ","2027-07-24":"الورقة المرقّمة من ١ إلى ١٠","2027-07-31":"الترتيب الأبجدي بالجرس","2027-08-07":"المواضيع العامة للسور","2027-08-14":"على الواقف","2027-08-21":"مسابقات الواتساب للمراجعة","2027-08-28":"«أعطني مهلة»","2027-09-04":"اختبار الزميلات في غياب المعلمة","2027-09-11":"أخذ الورد الجديد فرديًا: أربع دقائق لكل طالبة","2027-12-04":"التسميع بالعيّنة العشوائية ببطاقات الأرباع","2027-12-11":"مراجعة الجزء في ٢٥ دقيقة","2027-12-18":"بطاقات مطالع صفحات الأنعام","2027-12-25":"خريطة صفحات الأنعام وتدريب المفاصل","2028-02-05":"أكملي من حيث توقفتِ: الورد الجديد بالصفّين","2028-02-12":"«الكل يسأل واحدة»","2028-02-19":"معايير اختيار الاستراتيجية","2028-02-26":"السرد الثنائي الكامل","2028-03-04":"الحوار والنقاش في الدروس","2028-03-11":"حصة المراجعة التراكمية: أول أحد من كل شهر","2028-07-01":"صندوق البعيد","2028-07-08":"بدّلي الأوراق","2028-07-15":"الورد الصوتي المتبادل","2028-07-22":"الكرسي الساخن","2028-07-29":"كتلة المعالجة الجماعية","2028-08-05":"نصف الدائرة","2028-08-12":"رزنامة ١٢ أسبوعًا لتنويع طرائق المراجعة","2028-08-19":"المواجهة","2028-08-26":"الجولات الدوّارة بالجوازات","2028-09-02":"السبورة الأسرع","2028-09-09":"اصطفّي بترتيب المقطع","2028-12-02":"صفحتي وكلمتي: مراجعة سورة كاملة بصفحة لكل طالبة","2028-12-09":"اللفافات","2028-12-16":"تهيئة ما بعد الإجازات","2028-12-23":"المسابقة الدائرية","2028-12-30":"تغيير المكان والترتيب","2029-02-03":"الصف الأسرع","2029-02-10":"«دخول دافئ»: كلمة طيبة قبل فتح المصاحف","2029-02-17":"حرفك سؤالك","2029-02-24":"صندوق «دعاء بظهر الغيب»: قلوب متصلة طوال الحصة","2029-03-03":"أنقذي فريقك","2029-03-10":"«ألغاز الثلاثين ثانية»: تيقّظ وضحكة خفيفة"};
+  const TODAY = (() => { try{ return new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Dubai'}); }catch(e){ return new Date().toISOString().slice(0,10); } })();
   /* الطرق التي لها مقطع متحرك في vids/ (الاسم نفسه الصورة) */
   const VIDS = ['m_stations','save','row','circ','face','half','m_tasal','m_nidaa','m_waqif','m_musht','m_saff','m_jawaz','m_istaffi','m_silsila','m_qafz','m_halaq','m_kursi','m_ruus','m_marwaha'];
   const CHAN = '11', CHAN_URL = 'https://www.youtube.com/@fatma-wagdy';
@@ -472,7 +477,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     ar:{applied:'طُبّقت', idea:'فكرة مقترحة', book:'كتاب «حياة»', thisyear:'العام الحالي', who:'الفئة', time:'الزمن', src:'المصدر',
       goal:'الهدف', steps:'الخطوات', vars:'تنويعات وملاحظات', tools:'الأدوات', imp:'الأثر', att:'المرفقات', copy:'⧉ نسخ الطريقة', copyC:'⧉ نسخ',
       readSteps:'اقرئي الخطوات ←', all:'الكل', allMethods:'كل الطرق', results:'نتائج البحث', nonArab:'أعمالي مع غير العربيات',
-      empty:'لا توجد طرق بهذه الشروط. جرّبي كلمة أخرى أو اختاري «الكل».', soon:'🔒 قريبًا', openChan:'افتحي القناة ←', videos:'أكثر من ٤٠٠ فيديو',
+      empty:'لا توجد طرق بهذه الشروط. جرّبي كلمة أخرى أو اختاري «الكل».', soon:'🔒 قريبًا', openChan:'افتحي القناة ←', videos:'أكثر من ٤٠٠ فيديو', newWeek:'جديد هذا الأسبوع', fromArch:'من الأرشيف', archNote:'في الإجازة لا تُفتح طرق جديدة؛ نعود معكِ إلى طريقة من الأبواب المفتوحة.', partOpen:(o,n)=>`🔓 ${AR(o)} من ${AR(n)} · جديد كل سبت`,
       comingBab:'باب قادم', soonText:'يُفتح قريبًا بإذن الله. تابعي القناة ليصلكِ الإعلان.', chan:'قناة «علم يُنتفع به» ←',
       favOn:'حُفظت في المفضلة', favOff:'أُزيلت من المفضلة',
       share:'↗ شاركيها مع زميلة', shareDone:'نُسخ رابط الطريقة، أرسليه لمن تحبين', shareTail:'طريقة من «حلقة جديدة» · فاطمة وجدي', triedN:n=>`جرّبتها ${visN(n)}`,
@@ -484,7 +489,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     en:{applied:'Applied', idea:'Suggested idea', book:'«Hayah» book', thisyear:'This year', who:'For', time:'Time', src:'Source',
       goal:'Goal', steps:'Steps', vars:'Variations & notes', tools:'Tools', imp:'Impact', att:'Attachments', copy:'⧉ Copy method', copyC:'⧉ Copy',
       readSteps:'Read the steps →', all:'All', allMethods:'All methods', results:'Search results', nonArab:'My work with non-Arabic speakers',
-      empty:'No methods match. Try another word or choose «All».', soon:'🔒 Coming soon', openChan:'Open the channel →', videos:'400+ videos',
+      empty:'No methods match. Try another word or choose «All».', soon:'🔒 Coming soon', openChan:'Open the channel →', videos:'400+ videos', newWeek:'New this week', fromArch:'From the archive', archNote:'No new methods during the break; here is one from the open sections.', partOpen:(o,n)=>`🔓 ${o} of ${n} · new every Saturday`,
       comingBab:'Coming section', soonText:'Opening soon, in sha Allah. Follow the channel to hear when it opens.', chan:'«Ilm Yuntafa\' Bih» channel →',
       favOn:'Saved to favourites', favOff:'Removed from favourites',
       share:'↗ Share with a colleague', shareDone:'Method link copied — send it to whoever you like', shareTail:'A method from «New Halaqah» · Fatma Wagdy', triedN:n=>`${visN(n)} tried this`,
@@ -508,12 +513,13 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   const srcLabel = c => c.src===H ? t('book') : (c.src.includes('٢٠٢٦') ? t('thisyear') : (lang==='en' ? c.src.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('الآن','now') : c.src));
   const stLabel = s => s==='d' ? t('applied') : t('idea');
 
-  const isOpen = n => OPEN.includes(n);
+  const cardOpen = c => OPEN.includes(c.bab) || (!!SCHED[c.t] && SCHED[c.t] <= TODAY);
+  const isOpen = n => OPEN.includes(n) || D.cards.some(c => c.bab===n && cardOpen(c));
   /* باب ٠٢ «حلقاتي وفصولي» شرحٌ للفصول ومناهجها، لا طرق: لا يُعدّ في عدد الطرق، ولا حالة له ولا زر «جرّبتُ» */
   const CLS = '02', isM = c => c.bab!==CLS;
   function cntF(n){ if(lang==='en') return n===1 ? '1 class' : `${n} classes`;
     if(n===1) return 'فصل واحد'; if(n===2) return 'فصلان'; return n<=10 ? `${AR(n)} فصول` : `${AR(n)} فصلًا`; }
-  const ALL = D.cards; D.cards = ALL.filter(c => isOpen(c.bab));
+  const ALL = D.cards; D.cards = ALL.filter(cardOpen);
   const st = {bab:'', s:'', src:'', aud:'', q:''};
   let visible = [], view = 'home', stack = [];
   let fav = new Set(LS.get('pf-fav', []));
@@ -539,7 +545,8 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   function tileHTML(b){
     if(b.n===CHAN) return `<a class="tile chan" href="${CHAN_URL}" target="_blank" rel="noopener"><b>${esc(BT(b.n))}</b><small>${t('videos')}</small><span class="c">${t('openChan')}</span></a>`;
     if(!isOpen(b.n)) return `<button type="button" class="tile locked" data-lock="${b.n}"><span class="lock">${t('soon')}</span><b>${esc(BT(b.n))}</b><small class="tease">${esc(TZ(b.n))}</small></button>`;
-    return `<button type="button" class="tile" data-bab="${b.n}"><b>${esc(BT(b.n))}</b><small>${esc(BD(b.n))}</small></button>`;
+    const tot = ALL.filter(c => c.bab===b.n).length, on = D.cards.filter(c => c.bab===b.n).length;
+    return `<button type="button" class="tile" data-bab="${b.n}"><b>${esc(BT(b.n))}</b><small>${esc(BD(b.n))}</small>${on<tot ? `<span class="c">${t('partOpen')(on,tot)}</span>` : ''}</button>`;
   }
   function cardHTML(c){
     const img = c.img.length ? `<div class="thumb"><img src="imgs/${c.img[0]}.jpg" alt="" loading="lazy"></div>` : '';
@@ -552,7 +559,21 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   function renderHome(){
     document.getElementById('homeTiles').innerHTML = [...D.babs.filter(b=>isOpen(b.n)), ...['04','05','06','07','09','08','10','13','12','14','15'].filter(n=>!isOpen(n)).map(n=>BAB[n])].slice(0,6).map(tileHTML).join('');
     document.getElementById('groups').innerHTML = groupsOrder.map(g => `<div><p class="gtitle">${esc(GT(g))}</p><div class="tiles">${D.babs.filter(b=>b.g===g).map(tileHTML).join('')}</div></div>`).join('');
-    renderToday(); renderMost();
+    renderToday(); renderMost(); renderNew();
+  }
+  /* «جديد هذا الأسبوع» أو «من الأرشيف» في الإجازات، لسبعة أيام من السبت */
+  function renderNew(){
+    const w = document.getElementById('newWrap'); if(!w) return;
+    const ago = d => (Date.parse(TODAY) - Date.parse(d)) / 864e5;
+    const last = Object.values(SCHED).filter(d => d <= TODAY).sort().pop();
+    const ad = Object.keys(ARCH).filter(d => d <= TODAY).sort().pop();
+    let cs = [], title = '', note = '';
+    if(last && ago(last) < 7){ cs = D.cards.filter(c => SCHED[c.t]===last); title = t('newWeek'); }
+    else if(ad && ago(ad) < 7){ const c = D.cards.find(x => x.t===ARCH[ad]); if(c){ cs = [c]; title = t('fromArch'); note = t('archNote'); } }
+    w.hidden = !cs.length; if(!cs.length) return;
+    document.getElementById('newTitle').textContent = title;
+    const n = document.getElementById('newSub'); n.hidden = !note; n.textContent = note;
+    document.getElementById('newList').innerHTML = cs.map(cardHTML).join('');
   }
   function renderMost(){
     const top = D.cards.filter(c => isM(c) && (TRIED[c.id]||0) >= MIN_TRIED).sort((a,b) => TRIED[b.id]-TRIED[a.id]).slice(0,5);
@@ -572,7 +593,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   function renderChips(){ babsEl.innerHTML = `<button type="button" data-v="">${t('all')}</button>` + D.babs.filter(b => isOpen(b.n)).map(b => `<button type="button" data-v="${b.n}">${esc(BT(b.n))}</button>`).join(''); }
   function lockedNote(q){
     if(!q && !st.aud && !st.src) return '';
-    const lc = ALL.filter(c => !isOpen(c.bab) && match(c,q) && (!st.s || (c.s===st.s && isM(c))) && (!st.src || (st.src==='h' ? c.src===H : c.src!==H)) && (!st.aud || c.tags.includes('لغير_العربيات')));
+    const lc = ALL.filter(c => !cardOpen(c) && match(c,q) && (!st.s || (c.s===st.s && isM(c))) && (!st.src || (st.src==='h' ? c.src===H : c.src!==H)) && (!st.aud || c.tags.includes('لغير_العربيات')));
     if(!lc.length) return '';
     const babs = [...new Set(lc.map(c=>c.bab))].map(n => `«${esc(BT(n))}»`).join(lang==='en' ? ', ' : '، ');
     return `<div class="lnote">🔒 ${q ? t('locked')(lc.length, st.q.trim(), babs) : t('lockedAll')(lc.length, babs)}</div>`;
@@ -585,7 +606,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     visible = D.cards.filter(c => (!st.bab || c.bab===st.bab) && (!st.s || (c.s===st.s && isM(c)))
       && (!st.src || (st.src==='h' ? c.src===H : c.src!==H)) && (!st.aud || c.tags.includes('لغير_العربيات')) && match(c,q));
     document.getElementById('listTitle').textContent = st.bab ? BT(st.bab) : (q ? t('results') : (st.aud ? t('nonArab') : t('allMethods')));
-    const sub = document.getElementById('listSub'); sub.hidden = !st.bab; if(st.bab) sub.textContent = BD(st.bab);
+    const sub = document.getElementById('listSub'); sub.hidden = !st.bab; if(st.bab){ const tot = ALL.filter(c => c.bab===st.bab).length, on = D.cards.filter(c => c.bab===st.bab).length; sub.textContent = BD(st.bab) + (on<tot ? ' · ' + t('partOpen')(on,tot) : ''); }
     { const m = visible.filter(isM).length, f = visible.length - m;
       document.getElementById('count').textContent = st.bab===CLS ? cntF(f) : (f ? (m ? cnt(m) + (lang==='en' ? ', ' : '، و') + cntF(f) : cntF(f)) : cnt(m)); }
     const res = document.getElementById('results');
@@ -765,7 +786,7 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
     if(PATHMODE && location.hash.length>1 && /^\/(index\.html)?$/.test(location.pathname)){ try{ history.replaceState(null,'','/'+location.hash.slice(1)); }catch(e){} }
     { const m0 = curKey().match(/^(?:tried|shared|notify)-((?:card\d+|bab\d\d))$/); if(m0){ try{ history.replaceState(null,'',PATHMODE?'/'+m0[1]:'#'+m0[1]); }catch(e){} } }
     const h = curKey();
-    if(/^card\d+$/.test(h)){ if(cur && cur.id===h && !scrim.hidden) return; if(!document.querySelector('.view.on')) go('home'); const lc = ALL.find(c=>c.id===h); if(lc && !isOpen(lc.bab)) openLocked(lc.bab); else openCard(h); }
+    if(/^card\d+$/.test(h)){ if(cur && cur.id===h && !scrim.hidden) return; if(!document.querySelector('.view.on')) go('home'); const lc = ALL.find(c=>c.id===h); if(lc && !cardOpen(lc)) openLocked(lc.bab); else openCard(h); }
     else if(/^bab\d\d$/.test(h)){ if(!scrim.hidden) closeCard(); const n=h.slice(3); if(!BAB[n]) { go('home'); return; } if(!isOpen(n)){ if(!document.querySelector('.view.on')) go('home'); openLocked(n); return; } st.bab = n; go('list'); }
     else if(['about','babs','fav','list'].includes(h)){ if(!scrim.hidden) closeCard(); if(view!==h) go(h); }
     else { if(!scrim.hidden) closeCard(); if(view!=='home' || !document.querySelector('.view.on')) go('home'); }
