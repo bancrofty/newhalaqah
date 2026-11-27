@@ -814,6 +814,8 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
   html.nh-anim .rv{opacity:0;transform:translateY(18px);transition:opacity 0.9s ease,transform 0.9s cubic-bezier(.2,.7,.2,1)}
   html.nh-anim .rv.in{opacity:1;transform:none}
 }
+/* بعد أول مغادرة للرئيسية: لا تتكرر حركة الافتتاح عند الرجوع إليها */
+html.nh-seen .hero .logo,html.nh-seen .hero h1,html.nh-seen .hero h1::after,html.nh-seen .hero .brand-en,html.nh-seen .hero .sub,html.nh-seen .hero .aud,html.nh-seen .stats .stat,html.nh-seen .stat.yt svg{animation:none!important}
 </style>
 <script>
 (function(){
@@ -833,6 +835,8 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
       if(p<1) requestAnimationFrame(step); });},delay);
   }
   window.addEventListener('load',function(){
+    var vh=document.getElementById('v-home');
+    if(vh&&'MutationObserver' in window){ var mo=new MutationObserver(function(){ if(!vh.classList.contains('on')){ R.classList.add('nh-seen'); mo.disconnect(); } }); mo.observe(vh,{attributes:true,attributeFilter:['class']}); }
     var bs=document.querySelectorAll('.stats .stat b'); bs.forEach(function(b,i){countUp(b,1000+i*200)});
     /* ظهور ناعم لعناصر الصفحة الرئيسية عند التمرير */
     var els=document.querySelectorAll('#v-home .wrap > .sec-h, #today, #quick .pill, #homeTiles .tile, #v-home .footlink');
