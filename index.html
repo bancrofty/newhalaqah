@@ -776,5 +776,73 @@ h2.vt{font-family:var(--f-display);font-size:30px;line-height:1.3;margin:22px 0 
 })();
 </script>
 
+<!-- polish:v1 -->
+<style>
+/* ===== لمسات المظهر فقط (لا بيانات ولا إعدادات) ===== */
+.hero{position:relative;overflow:hidden;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F7F0E3' stroke-width='1'%3E%3Crect x='18' y='18' width='28' height='28'/%3E%3Crect x='18' y='18' width='28' height='28' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:64px 64px}
+.hero::after{content:"";position:absolute;z-index:-1;left:50%;top:40px;width:min(640px,120%);height:320px;transform:translateX(-50%);
+  background:radial-gradient(closest-side,rgba(228,0,0,.22),transparent);filter:blur(10px);pointer-events:none}
+.hero h1{position:relative;display:table;margin-inline:auto}
+.hero h1::after{content:"";display:block;height:4px;border-radius:4px;background:#E40000;margin:2px auto 0;width:42%;transform-origin:center}
+.sec-h h3{display:flex;align-items:center;gap:10px}
+.sec-h h3::before{content:"";width:6px;height:22px;border-radius:3px;background:var(--red);flex:none}
+.today .tl{position:relative;overflow:hidden}
+.today .tl::after{content:"";position:absolute;inset:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-160%)}
+.today:hover .tl::after{animation:nhShine 1s ease}
+.today{transition:transform .2s,box-shadow .2s}.today:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(43,33,33,.18)}
+.stat{transition:transform .2s,box-shadow .2s}.stat:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+@keyframes nhShine{to{transform:translateX(360%)}}
+@keyframes nhUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes nhZoom{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes nhLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes nhPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@media (prefers-reduced-motion:no-preference){
+  html.nh-anim .hero .logo{animation:nhZoom 1.2s cubic-bezier(.2,.7,.2,1) both}
+  html.nh-anim .hero h1{animation:nhUp 1.05s 0.22s both}
+  html.nh-anim .hero h1::after{animation:nhLine 1.05s 1.05s cubic-bezier(.2,.7,.2,1) both}
+  html.nh-anim .hero .brand-en{animation:nhUp 1.05s 0.38s both}
+  html.nh-anim .hero .sub{animation:nhUp 1.05s 0.52s both}
+  html.nh-anim .hero .aud{animation:nhUp 1.05s 0.68s both}
+  html.nh-anim .stats .stat{animation:nhUp 0.9s both}
+  html.nh-anim .stats .stat:nth-child(1){animation-delay:0.83s}
+  html.nh-anim .stats .stat:nth-child(2){animation-delay:1.02s}
+  html.nh-anim .stats .stat:nth-child(3){animation-delay:1.22s}
+  html.nh-anim .stat.yt svg{animation:nhPulse 2.1s 2.4s ease-in-out 2}
+  html.nh-anim .rv{opacity:0;transform:translateY(18px);transition:opacity 0.9s ease,transform 0.9s cubic-bezier(.2,.7,.2,1)}
+  html.nh-anim .rv.in{opacity:1;transform:none}
+}
+</style>
+<script>
+(function(){
+  if(!window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var R=document.documentElement; R.classList.add('nh-anim');
+  /* عدّ تصاعدي للأرقام، وينتهي بالنص الأصلي نفسه حرفيًّا */
+  var AD='٠١٢٣٤٥٦٧٨٩';
+  function countUp(el,delay){
+    var orig=el.textContent, m=orig.match(/[0-9٠-٩]+/); if(!m) return;
+    var ar=/[٠-٩]/.test(m[0]); var n=parseInt(m[0].replace(/[٠-٩]/g,function(d){return AD.indexOf(d)}),10); if(!n) return;
+    var fmt=function(v){var x=String(v);return ar?x.replace(/\d/g,function(d){return AD[d]}):x};
+    var dur=1700, t0=null;
+    el.textContent=orig.replace(m[0],fmt(0));
+    setTimeout(function(){requestAnimationFrame(function step(t){ if(!t0)t0=t; var p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      if(el.textContent.indexOf(fmt(0))<0 && p<1 && t0!==t){} 
+      el.textContent = p<1 ? orig.replace(m[0],fmt(Math.round(n*e))) : orig;
+      if(p<1) requestAnimationFrame(step); });},delay);
+  }
+  window.addEventListener('load',function(){
+    var bs=document.querySelectorAll('.stats .stat b'); bs.forEach(function(b,i){countUp(b,1000+i*200)});
+    /* ظهور ناعم لعناصر الصفحة الرئيسية عند التمرير */
+    var els=document.querySelectorAll('#v-home .wrap > .sec-h, #today, #quick .pill, #homeTiles .tile, #v-home .footlink');
+    if(!('IntersectionObserver' in window)) return;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} })},{rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el,i){ el.classList.add('rv'); el.style.transitionDelay=((i%4)*110)+'ms'; io.observe(el); });
+    setTimeout(function(){els.forEach(function(el){el.classList.add('in')})},6000);
+  });
+})();
+</script>
+
 </body>
 </html>
